@@ -284,13 +284,14 @@ impl<'a> Evaluator<'a> {
         entry: &UniverseEntry<'a, UniverseItem>,
         args: Vec<TypedExpression>,
     ) -> Result<Option<TypedExpression>, FractalError> {
-        // TODO(superwhiskers): remove expect
         self.eval_fn(
-            self.universe
-                .get(entry.binding)
-                .expect("no binding found")
-                .1
-                .clone(),
+            match self.universe.get(entry.binding) {
+                Some(b) => b,
+                None => {
+                    eprintln!("Couldn't find binding");
+                    std::process::exit(1);
+                },
+            }.1.clone(),
             args,
         )
     }
